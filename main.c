@@ -1,67 +1,130 @@
-#include "gio/gio.h"
 #include <gtk/gtk.h>
+#include "bitcoin.h"
 
-static void print_hello(GtkWidget *widget, gpointer data) {
-  g_print("Hello World\n");
+// Structure to hold all our widgets
+typedef struct {
+    GtkWidget *entry_address;
+    GtkWidget *label_balance;
+    GtkWidget *label_balance_usd;
+    BitcoinWallet *current_wallet;
+} AppWidgets;
+
+// Callback for copying text to clipboard
+static void copy_to_clipboard(GtkWidget *button, gpointer user_data) {
+    GtkEntry *entry = GTK_ENTRY(user_data);
+    const gchar *text = gtk_entry_get_text(entry);
+    
+    GtkClipboard *clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+    gtk_clipboard_set_text(clipboard, text, -1);
+    
+    g_print("Copied to clipboard: %s\n", text);
 }
 
-static void activate(GtkApplication *app, gpointer user_data) {
-  GtkWidget *window;
-  GtkWidget *grid;
-  GtkWidget *button;
-
-  /* create a new window, and set its title */
-  window = gtk_application_window_new(app);
-  gtk_window_set_title(GTK_WINDOW(window), "Window");
-  gtk_container_set_border_width(GTK_CONTAINER(window), 10);
-
-  /* Here we construct the container that is going pack our buttons */
-  grid = gtk_grid_new();
-
-  /* Pack the container in the window */
-  gtk_container_add(GTK_CONTAINER(window), grid);
-
-  button = gtk_button_new_with_label("Button 1");
-  g_signal_connect(button, "clicked", G_CALLBACK(print_hello), NULL);
-
-  /* Place the first button in the grid cell (0, 0), and make it fill
-   * just 1 cell horizontally and vertically (ie no spanning)
-   */
-  gtk_grid_attach(GTK_GRID(grid), button, 0, 0, 1, 1);
-
-  button = gtk_button_new_with_label("Button 2");
-  g_signal_connect(button, "clicked", G_CALLBACK(print_hello), NULL);
-
-  /* Place the second button in the grid cell (1, 0), and make it fill
-   * just 1 cell horizontally and vertically (ie no spanning)
-   */
-  gtk_grid_attach(GTK_GRID(grid), button, 1, 0, 1, 1);
-
-  button = gtk_button_new_with_label("Quit");
-  g_signal_connect_swapped(button, "clicked", G_CALLBACK(gtk_widget_destroy),
-                           window);
-
-  /* Place the Quit button in the grid cell (0, 1), and make it
-   * span 2 columns.
-   */
-  gtk_grid_attach(GTK_GRID(grid), button, 0, 1, 2, 1);
-
-  /* Now that we are done packing our widgets, we show them all
-   * in one go, by calling gtk_widget_show_all() on the window.
-   * This call recursively calls gtk_widget_show() on all widgets
-   * that are contained in the window, directly or indirectly.
-   */
-  gtk_widget_show_all(window);
+// Callback for generating a new wallet
+static void generate_wallet(GtkWidget *button, gpointer user_data) {
+    AppWidgets *widgets = (AppWidgets *)user_data;
+    
+    // Free previous wallet if exists
+    if (widgets->current_wallet) {
+        bitcoin_wallet_free(widgets->current_wallet);
+        widgets->current_wallet = NULL;
+    }
+    
+    // Generate new wallet
+    widgets->current_wallet = bitcoin_wallet_create();
+    
+    if (!widgets->current_wallet) {
+        g_printerr("Failed to create wallet!\n");
+        return;
+    }
+    
+    // Update address field
+    gtk_entry_set_text(GTK_ENTRY(widgets->entry_address), 
+                       widgets->current_wallet->mainnet_address);
+    
+    // Balance starts at 0
+    gtk_label_set_text(GTK_LABEL(widgets->label_balance), "0.00000000 BTC");
+    gtk_label_set_text(GTK_LABEL(widgets->label_balance_usd), "≈ $0.00 USD");
+    
+    g_print("New wallet generated!\n");
+    g_print("Address: %s\n", widgets->current_wallet->mainnet_address);
 }
 
-int main(int argc, char **argv) {
-  GtkApplication *app;
-  int status;
+// Cleanup function called when window is destroyed
+static void cleanup(GtkWidget *widget, gpointer user_data) {
+    AppWidgets *widgets = (AppWidgets *)user_data;
+    
+    // Free wallet if exists
+    if (widgets->current_wallet) {
+        bitcoin_wallet_free(widgets->current_wallet);
+        widgets->current_wallet = NULL;
+    }
+    
+    // Cleanup Bitcoin library
+    bitcoin_cleanup();
+    
+    // Free the widgets structure
+    g_free(widgets);
+    
+    gtk_main_quit();
+}
 
-  app = gtk_application_new("org.gtk.example", G_APPLICATION_DEFAULT_FLAGS);
-  g_signal_connect(app, "activate", G_CALLBACK(activate), NULL);
-  status = g_application_run(G_APPLICATION(app), argc, argv);
-  g_object_unref(app);
-
-  return status;
+int main(int argc, char *argv[]) {
+    GtkBuilder *builder;
+    GObject *window;
+    GObject *button;
+    GError *error = NULL;
+    
+    // Initialize Bitcoin library
+    if (!bitcoin_init()) {
+        g_printerr("Failed to initialize Bitcoin library!\n");
+        return 1;
+    }
+    
+    // Initialize GTK
+    gtk_init(&argc, &argv);
+    
+    // Create builder and load UI file
+    builder = gtk_builder_new();
+    if (gtk_builder_add_from_file(builder, "builder.ui", &error) == 0) {
+        g_printerr("Error loading file: %s\n", error->message);
+        g_clear_error(&error);
+        bitcoin_cleanup();
+        return 1;
+    }
+    
+    // Allocate structure to hold widgets
+    AppWidgets *widgets = g_new0(AppWidgets, 1);
+    widgets->current_wallet = NULL;
+    
+    // Get window
+    window = gtk_builder_get_object(builder, "window");
+    
+    // Get widgets
+    widgets->entry_address = GTK_WIDGET(gtk_builder_get_object(builder, "entry_address"));
+    widgets->label_balance = GTK_WIDGET(gtk_builder_get_object(builder, "label_balance"));
+    widgets->label_balance_usd = GTK_WIDGET(gtk_builder_get_object(builder, "label_balance_usd"));
+    
+    // Connect generate button
+    button = gtk_builder_get_object(builder, "btn_generate");
+    g_signal_connect(button, "clicked", G_CALLBACK(generate_wallet), widgets);
+    
+    // Connect copy button
+    button = gtk_builder_get_object(builder, "btn_copy_address");
+    g_signal_connect(button, "clicked", G_CALLBACK(copy_to_clipboard), widgets->entry_address);
+    
+    // Connect quit button
+    button = gtk_builder_get_object(builder, "btn_quit");
+    g_signal_connect(button, "clicked", G_CALLBACK(cleanup), widgets);
+    
+    // Connect window destroy signal
+    g_signal_connect(window, "destroy", G_CALLBACK(cleanup), widgets);
+    
+    // We don't need the builder anymore
+    g_object_unref(builder);
+    
+    // Start GTK main loop
+    gtk_main();
+    
+    return 0;
 }

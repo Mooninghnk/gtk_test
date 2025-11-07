@@ -2,7 +2,6 @@
 #define BITCOIN_H
 #include <stddef.h>
 
-
 typedef struct {
     unsigned char privkey[32];
     unsigned char pubkey[33];
@@ -13,9 +12,14 @@ typedef struct {
     char *testnet_address;
 } BitcoinWallet;
 
-void generate_priv_key(unsigned char *privkey);
+// Initialization and cleanup
+int bitcoin_init(void);
+void bitcoin_cleanup(void);
+
+// Core functions (return 1 on success, 0 on failure)
+int generate_priv_key(unsigned char *privkey);
 int derive_pubkey(const unsigned char *privkey, unsigned char *pubkey_compressed);
-void private_key_to_wif(const unsigned char *privkey, char *wif_out);
+int private_key_to_wif(const unsigned char *privkey, char *wif_out);
 char *generate_address(const unsigned char *pubkey_compressed, int testnet);
 
 // Helper functions
@@ -24,6 +28,6 @@ char *base58_encode(const unsigned char *data, size_t len);
 
 // High-level wallet generation
 BitcoinWallet *bitcoin_wallet_create(void);
-void bitcoin_wallet_free(BitcoinWallet *wallet)
+void bitcoin_wallet_free(BitcoinWallet *wallet);
 
 #endif

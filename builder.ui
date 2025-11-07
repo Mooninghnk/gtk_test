@@ -1,45 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <interface>
+  <requires lib="gtk+" version="3.20" />
+
   <object id="window" class="GtkWindow">
     <property name="visible">True</property>
-    <property name="title">Grid</property>
-    <property name="border-width">10</property>
+    <property name="can_focus">False</property>
+    <property name="title">Bitcoin Wallet</property>
+    <property name="default_width">600</property>
+    <property name="default_height">400</property>
+    <property name="window_position">center</property>
+    <property name="resizable">False</property>
+
     <child>
-      <object id="grid" class="GtkGrid">
+      <object class="GtkBox">
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">0</property>
+
+        <!-- Header -->
         <child>
-          <object id="button1" class="GtkButton">
+          <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="label">Button 1</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+            <property name="margin">30</property>
+            <property name="margin_bottom">20</property>
+            <property name="spacing">8</property>
+
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label">Bitcoin Wallet</property>
+                <attributes>
+                  <attribute name="scale" value="2.5" />
+                  <attribute name="weight" value="bold" />
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label">Your secure Bitcoin wallet</property>
+                <attributes>
+                  <attribute name="scale" value="1.1" />
+                </attributes>
+                <style>
+                  <class name="dim-label" />
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
           </object>
           <packing>
-            <property name="left-attach">0</property>
-            <property name="top-attach">0</property>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
           </packing>
         </child>
+
+        <!-- Main Content -->
         <child>
-          <object id="button2" class="GtkButton">
+          <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="label">Button 2</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+            <property name="margin_start">30</property>
+            <property name="margin_end">30</property>
+            <property name="margin_bottom">30</property>
+            <property name="spacing">20</property>
+
+            <!-- Balance Display -->
+            <child>
+              <object class="GtkFrame">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label_xalign">0</property>
+                <child type="label">
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="label">Balance</property>
+                    <attributes>
+                      <attribute name="weight" value="bold" />
+                      <attribute name="scale" value="1.1" />
+                    </attributes>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <property name="margin">20</property>
+                    <property name="spacing">5</property>
+
+                    <child>
+                      <object id="label_balance" class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">0.00000000 BTC</property>
+                        <property name="halign">center</property>
+                        <attributes>
+                          <attribute name="scale" value="2.5" />
+                          <attribute name="weight" value="bold" />
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+
+                    <child>
+                      <object id="label_balance_usd" class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label">≈ $0.00 USD</property>
+                        <property name="halign">center</property>
+                        <attributes>
+                          <attribute name="scale" value="1.2" />
+                        </attributes>
+                        <style>
+                          <class name="dim-label" />
+                        </style>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+
+            <!-- Address Display -->
+            <child>
+              <object class="GtkFrame">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label_xalign">0</property>
+                <child type="label">
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="label">Your Bitcoin Address</property>
+                    <attributes>
+                      <attribute name="weight" value="bold" />
+                      <attribute name="scale" value="1.1" />
+                    </attributes>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin">15</property>
+                    <property name="spacing">10</property>
+
+                    <child>
+                      <object id="entry_address" class="GtkEntry">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="editable">False</property>
+                        <property
+                                                    name="text"
+                                                >Click 'Generate Wallet' to create your address</property>
+                        <property name="has_frame">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+
+                    <child>
+                      <object id="btn_copy_address" class="GtkButton">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="label">Copy</property>
+                        <property name="width_request">80</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+
+            <!-- Action Buttons -->
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">horizontal</property>
+                <property name="spacing">10</property>
+                <property name="margin_top">10</property>
+
+                <child>
+                  <object id="btn_generate" class="GtkButton">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="label">Generate Wallet</property>
+                    <property name="height_request">45</property>
+                    <style>
+                      <class name="suggested-action" />
+                    </style>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+
+                <child>
+                  <object id="btn_quit" class="GtkButton">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="label">Exit</property>
+                    <property name="height_request">45</property>
+                    <style>
+                      <class name="destructive-action" />
+                    </style>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+
           </object>
           <packing>
-            <property name="left-attach">1</property>
-            <property name="top-attach">0</property>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
           </packing>
         </child>
-        <child>
-          <object id="quit" class="GtkButton">
-            <property name="visible">True</property>
-            <property name="label">Quit</property>
-          </object>
-          <packing>
-            <property name="left-attach">0</property>
-            <property name="top-attach">1</property>
-            <property name="width">2</property>
-          </packing>
-        </child>
+
       </object>
-      <packing>
-      </packing>
     </child>
   </object>
 </interface>
