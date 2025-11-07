@@ -1,6 +1,7 @@
 #ifndef BITCOIN_H
 #define BITCOIN_H
 #include <stddef.h>
+#include <stdint.h>
 
 typedef struct {
     unsigned char privkey[32];
@@ -11,6 +12,12 @@ typedef struct {
     char *mainnet_address;
     char *testnet_address;
 } BitcoinWallet;
+
+typedef struct {
+    char addres[64];
+    uint64_t balance;
+    int transaction_count;
+} AddressBalance ;
 
 // Initialization and cleanup
 int bitcoin_init(void);

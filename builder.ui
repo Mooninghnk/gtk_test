@@ -242,99 +242,6 @@
                 <property name="margin">20</property>
                 <property name="spacing">15</property>
 
-                <!-- Set Password Section -->
-                <child>
-                  <object class="GtkFrame">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label_xalign">0</property>
-                    <child type="label">
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="label">Wallet Password</property>
-                        <attributes>
-                          <attribute name="weight" value="bold" />
-                        </attributes>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="orientation">vertical</property>
-                        <property name="margin">15</property>
-                        <property name="spacing">10</property>
-
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property
-                                                            name="label"
-                                                        >Set a password to encrypt your wallet</property>
-                            <property name="halign">start</property>
-                            <style>
-                              <class name="dim-label" />
-                            </style>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-
-                        <child>
-                          <object class="GtkBox">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="spacing">10</property>
-
-                            <child>
-                              <object id="entry_password" class="GtkEntry">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="visibility">False</property>
-                                <property
-                                                                    name="placeholder_text"
-                                                                >Enter password</property>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-
-                            <child>
-                              <object id="btn_set_password" class="GtkButton">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="label">Set Password</property>
-                                <property name="width_request">120</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-
                 <!-- Export Keys Section -->
                 <child>
                   <object class="GtkFrame">
@@ -564,7 +471,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">1</property>
+                    <property name="position">0</property>
                   </packing>
                 </child>
 

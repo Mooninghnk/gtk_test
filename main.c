@@ -9,12 +9,10 @@ typedef struct {
     GtkWidget *label_balance_usd;
 
     // Security tab
-    GtkWidget *entry_password;
     GtkWidget *entry_privkey;
     GtkWidget *entry_wif;
 
     BitcoinWallet *current_wallet;
-    gboolean password_set;
     GtkWidget *balance;
     GtkWidget *tx_count;
     GtkWidget *check_balance_button;
@@ -26,27 +24,10 @@ static void copy_to_clipboard(GtkWidget *button, gpointer user_data) {
     GtkEntry *entry = GTK_ENTRY(user_data);
     const gchar *text = gtk_entry_get_text(entry);
 
-    GtkClipboard *clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+    GtkClipboard *clipboard = gtk_clipboard_get(gdk_atom_intern("CLIPBOARD", FALSE));
     gtk_clipboard_set_text(clipboard, text, -1);
 
     g_print("Copied to clipboard\n");
-}
-
-// Callback for setting password
-static void set_password(GtkWidget *button, gpointer user_data) {
-    AppWidgets *widgets = (AppWidgets *)user_data;
-    const gchar *password = gtk_entry_get_text(GTK_ENTRY(widgets->entry_password));
-
-    if (strlen(password) < 6) {
-        g_print("Password too short! Use at least 6 characters.\n");
-        return;
-    }
-
-    widgets->password_set = TRUE;
-    g_print("Password set successfully!\n");
-
-    // Clear password field for security
-    gtk_entry_set_text(GTK_ENTRY(widgets->entry_password), "");
 }
 
 // Callback for generating a new wallet
@@ -129,7 +110,6 @@ int main(int argc, char *argv[]) {
     // Allocate structure to hold widgets
     AppWidgets *widgets = g_new0(AppWidgets, 1);
     widgets->current_wallet = NULL;
-    widgets->password_set = FALSE;
 
     // Get window
     window = gtk_builder_get_object(builder, "window");
@@ -140,7 +120,6 @@ int main(int argc, char *argv[]) {
     widgets->label_balance_usd = GTK_WIDGET(gtk_builder_get_object(builder, "label_balance_usd"));
 
     // Get Security tab widgets
-    widgets->entry_password = GTK_WIDGET(gtk_builder_get_object(builder, "entry_password"));
     widgets->entry_privkey = GTK_WIDGET(gtk_builder_get_object(builder, "entry_privkey"));
     widgets->entry_wif = GTK_WIDGET(gtk_builder_get_object(builder, "entry_wif"));
 
@@ -152,9 +131,6 @@ int main(int argc, char *argv[]) {
     g_signal_connect(button, "clicked", G_CALLBACK(copy_to_clipboard), widgets->entry_address);
 
     // Connect Security tab buttons
-    button = gtk_builder_get_object(builder, "btn_set_password");
-    g_signal_connect(button, "clicked", G_CALLBACK(set_password), widgets);
-
     button = gtk_builder_get_object(builder, "btn_copy_privkey");
     g_signal_connect(button, "clicked", G_CALLBACK(copy_to_clipboard), widgets->entry_privkey);
 
