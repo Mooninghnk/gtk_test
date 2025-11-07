@@ -4,20 +4,20 @@
 #include <stdint.h>
 
 typedef struct {
-    unsigned char privkey[32];
-    unsigned char pubkey[33];
-    char privkey_hex[65];
-    char pubkey_hex[67];
-    char wif[53];
-    char *mainnet_address;
-    char *testnet_address;
+  unsigned char privkey[32];
+  unsigned char pubkey[33];
+  char privkey_hex[65];
+  char pubkey_hex[67];
+  char wif[53];
+  char *mainnet_address;
+  char *testnet_address;
 } BitcoinWallet;
 
 typedef struct {
-    char addres[64];
-    uint64_t balance;
-    int transaction_count;
-} AddressBalance ;
+  char addres[64];
+  uint64_t balance;
+  int transaction_count;
+} AddressBalance;
 
 // Initialization and cleanup
 int bitcoin_init(void);
@@ -25,7 +25,8 @@ void bitcoin_cleanup(void);
 
 // Core functions (return 1 on success, 0 on failure)
 int generate_priv_key(unsigned char *privkey);
-int derive_pubkey(const unsigned char *privkey, unsigned char *pubkey_compressed);
+int derive_pubkey(const unsigned char *privkey,
+                  unsigned char *pubkey_compressed);
 int private_key_to_wif(const unsigned char *privkey, char *wif_out);
 char *generate_address(const unsigned char *pubkey_compressed, int testnet);
 
